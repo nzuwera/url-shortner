@@ -9,3 +9,6 @@ target/
 
 ### .env file ###
 .env
+
+### log files ###
+logs/
