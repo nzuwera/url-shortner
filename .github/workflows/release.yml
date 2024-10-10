@@ -38,11 +38,11 @@ jobs:
         run: |
           TAG_NAME=${{ github.event.release.tag_name }}
           echo "Pushing Docker image to Docker Hub with tag $TAG_NAME"
-          docker push $GITHUB_REPOSITORY:$TAG_NAME
+          docker push nzuwera/url-shortner:$TAG_NAME
+          docker push nzuwera/url-shortner:latest
       - name: Commit version bump
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name $GITHUB_ACTOR
           git add pom.xml
           git commit -m "Bump version to $TAG_NAME"
           git push origin main  # Pushes the commit to the main branch
