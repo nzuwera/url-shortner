@@ -42,7 +42,6 @@ jobs:
           docker push nzuwera/url-shortner:latest
       - name: Commit version bump
         run: |
-          git config user.name $GITHUB_ACTOR
           git add pom.xml
           git commit -m "Bump version to $TAG_NAME"
           git push origin main  # Pushes the commit to the main branch
