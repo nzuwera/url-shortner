@@ -33,8 +33,7 @@ jobs:
         run: |
           TAG_NAME=${{ github.event.release.tag_name }}
           echo "Building Docker image with tag $TAG_NAME"
-          docker build -t nzuwera/url-shortner:$TAG_NAME .
-          dokcer build -t nzuwera/url-shortner:latest .
+          docker build -t nzuwera/url-shortner:$TAG_NAME -t nzuwera/url-shortner:latest .
       - name: Push Docker image
         run: |
           TAG_NAME=${{ github.event.release.tag_name }}
