@@ -48,5 +48,5 @@ jobs:
           git config user.email github-actions@github.com
           git add pom.xml
           git commit -m "Bump version to $TAG_NAME"
-          git push
+          git push origin HEAD:main
 
