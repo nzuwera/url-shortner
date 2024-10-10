@@ -21,8 +21,9 @@ jobs:
         run: |
           TAG_NAME=${{ github.event.release.tag_name }}
           echo "Bumping application version to $TAG_NAME"
-          mvn versions:set -DnewVersion=$TAG_NAME
-          mvn versions:commit
+          mvn --no-transfer-progress versions:set -DnewVersion=$TAG_NAME
+          mvn --no-transfer-progress versions:commit
+          mvn --no-transfer-progress clean package -DskipTests
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -32,7 +33,8 @@ jobs:
         run: |
           TAG_NAME=${{ github.event.release.tag_name }}
           echo "Building Docker image with tag $TAG_NAME"
-          docker build -t nzuwera/url-shortner:$TAG_NAME . -t nzuwera/url-shortner:latest .
+          docker build -t nzuwera/url-shortner:$TAG_NAME .
+          dokcer build -t nzuwera/url-shortner:latest .
       - name: Push Docker image
         run: |
           TAG_NAME=${{ github.event.release.tag_name }}
