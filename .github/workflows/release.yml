@@ -40,8 +40,16 @@ jobs:
           echo "Pushing Docker image to Docker Hub with tag $TAG_NAME"
           docker push nzuwera/url-shortner:$TAG_NAME
           docker push nzuwera/url-shortner:latest
+
+      - name: Configure Git user
+        run: |
+            git config --global user.name "${{ github.actor }}"
+            git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
       - name: Commit version bump
         run: |
-          git add pom.xml
-          git commit -m "Bump version to $TAG_NAME"
-          git push origin main  # Pushes the commit to the main branch
+            TAG_NAME=${{ github.event.release.tag_name }}
+            git add pom.xml
+            git commit -m "Bump version to $TAG_NAME"
+            git push origin main  # Change this if your default branch is not 'main'
+
