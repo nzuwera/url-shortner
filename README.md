@@ -1,3 +1,7 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=nzuwera_url-shortner&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=nzuwera_url-shortner)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=nzuwera_url-shortner&metric=bugs)](https://sonarcloud.io/summary/new_code?id=nzuwera_url-shortner)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=nzuwera_url-shortner&metric=coverage)](https://sonarcloud.io/summary/new_code?id=nzuwera_url-shortner)
+
 # url-shortner
 IT-Impulse take home assigment
 
