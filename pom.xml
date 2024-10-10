@@ -109,6 +109,13 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.12</version>
+                <configuration>
+                    <excludes>
+                        <exclude>com/nzuwera/assignment/urlshortner/entity/*</exclude>
+                        <exclude>com/nzuwera/assignment/urlshortner/exception/*</exclude>
+                        <exclude>com/nzuwera/assignment/urlshortner/utils/*</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
