@@ -7,6 +7,10 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDateTime;
 
 public class DtoMapper {
+    private DtoMapper() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static ShortUrl toEntity(CreateShortUrlRequest request) {
         ShortUrl shortUrl = new ShortUrl();
         shortUrl.setUrl(request.getUrl());

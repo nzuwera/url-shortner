@@ -19,9 +19,8 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.in;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class UrlShortenerServiceTest {
@@ -42,10 +41,10 @@ class UrlShortenerServiceTest {
 
     @Test
     @DisplayName("Create shortUrl successful using originalUrl only!")
-    public void UrlShortenerService_CreateShortUrl_ReturnResponseObjectShortUrl_001() {
+    void UrlShortenerService_CreateShortUrl_ReturnResponseObjectShortUrl_001() {
         String originalUrl = "https://google.com";
         request.setUrl(originalUrl);
-        ShortUrl shortUrl = DtoMapper.toEntity(request);
+        shortUrl = DtoMapper.toEntity(request);
         Mockito.when(shortUrlRepository.save(Mockito.any(ShortUrl.class))).thenReturn(shortUrl);
 
         ResponseObject<ShortUrl> createdUrl = shortUrlService.create(request);
@@ -59,12 +58,12 @@ class UrlShortenerServiceTest {
 
     @Test
     @DisplayName("Create shortUrl successful using originalUrl and UrlId!")
-    public void UrlShortenerService_CreateShortUrl_ReturnResponseObjectShortUrl_002() {
+    void UrlShortenerService_CreateShortUrl_ReturnResponseObjectShortUrl_002() {
         String originalUrl = "https://google.com";
         String desiredUrlId = "GGL12345";
         request.setUrl(originalUrl);
         request.setShortUrlId(desiredUrlId);
-        ShortUrl shortUrl = DtoMapper.toEntity(request);
+        shortUrl = DtoMapper.toEntity(request);
         Mockito.when(shortUrlRepository.save(Mockito.any(ShortUrl.class))).thenReturn(shortUrl);
 
         ResponseObject<ShortUrl> createdUrl = shortUrlService.create(request);
@@ -80,14 +79,14 @@ class UrlShortenerServiceTest {
     }
     @Test
     @DisplayName("Create shortUrl successful using originalUrl, UrlId and ttl!")
-    public void UrlShortenerService_CreateShortUrl_ReturnResponseObjectShortUrl_003() {
+    void UrlShortenerService_CreateShortUrl_ReturnResponseObjectShortUrl_003() {
         String originalUrl = "https://google.com";
         String desiredUrlId = "GGL12345";
         int ttl = 10;
         request.setUrl(originalUrl);
         request.setShortUrlId(desiredUrlId);
         request.setTtl(ttl);
-        ShortUrl shortUrl = DtoMapper.toEntity(request);
+        shortUrl = DtoMapper.toEntity(request);
         Mockito.when(shortUrlRepository.save(Mockito.any(ShortUrl.class))).thenReturn(shortUrl);
 
         ResponseObject<ShortUrl> createdUrl = shortUrlService.create(request);
@@ -103,7 +102,7 @@ class UrlShortenerServiceTest {
 
     @Test
     @DisplayName("Create shortUrl return AlreadyExistException")
-    public void UrlShortenerService_CreateShortUrl_ReturnAlreadyExistException() {
+    void UrlShortenerService_CreateShortUrl_ReturnAlreadyExistException() {
         String originalUrl = "https://google.com";
         String desiredUrlId = "GGL12345";
         int ttl = 10;

@@ -33,7 +33,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
      */
     @ExceptionHandler({RuntimeException.class, NullPointerException.class, SQLException.class, IllegalArgumentException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<ResponseObject<?>> handleAllException(Exception ex) {
+    public ResponseEntity<ResponseObject> handleAllException(Exception ex) {
         log.error("handleAllException by class {} : {}", this.getClass().getSimpleName(), ex.getMessage());
         ResponseObject responseObject = ResponseObject.builder()
                 .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
@@ -52,7 +52,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
      */
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<ResponseObject<?>> customHandleNotFoundException(NotFoundException ex) {
+    public ResponseEntity<ResponseObject> customHandleNotFoundException(NotFoundException ex) {
         ResponseObject responseObject = ResponseObject.builder()
                 .code(HttpStatus.NOT_FOUND.value())
                 .message(ex.getMessage())

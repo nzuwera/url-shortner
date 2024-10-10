@@ -39,7 +39,7 @@ class ShortUrlRepositoryTest {
         ShortUrl savedUrl = repository.save(shortUrl);
         assertThat(savedUrl).isNotNull();
         Optional<ShortUrl> foundUrl = repository.findByUrlId(shortUrl.getUrlId());
-        assertThat(foundUrl.isPresent()).isTrue(); // Check if value is present
+        assertThat(foundUrl).isPresent(); // Check if value is present
         assertThat(foundUrl.get()).isNotNull();    // Verify the entity is not null
     }
 
@@ -50,7 +50,7 @@ class ShortUrlRepositoryTest {
         assertThat(savedUrl).isNotNull();
 
         Optional<ShortUrl> foundUrl = repository.findByUrl(shortUrl.getUrl());
-        assertThat(foundUrl.isPresent()).isTrue(); // Check if value is present
+        assertThat(foundUrl).isPresent(); // Check if value is present
         assertThat(foundUrl.get()).isNotNull();    // Verify the entity is not null
     }
 }
