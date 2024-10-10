@@ -29,6 +29,7 @@ jobs:
       - name: Commit & Push changes
         uses: actions-js/push@master
         with:
+          author_name: $GITHUB_REPOSITORY_OWNER
           github_token: ${{ secrets.GITHUB_TOKEN }}
           message: "Bump version to $TAG_NAME"
       - name: Login to Docker Hub
