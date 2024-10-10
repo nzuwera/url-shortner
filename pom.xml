@@ -104,7 +104,22 @@
                 <artifactId>sonar-maven-plugin</artifactId>
                 <version>4.0.0.4121</version>
             </plugin>
-            <!-- Jacoco plugin for pushing test coverage to SonarCloud -->
+            <!-- Maven Failsafe Plugin for Running Integration Tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Jacoco Test Code Coverage -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -117,11 +132,11 @@
                         </goals>
                     </execution>
                     <execution>
-                        <id>default-report</id>
-                        <phase>prepare-package</phase>
+                        <id>report</id>
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <phase>integration-test</phase>
                     </execution>
                 </executions>
             </plugin>
