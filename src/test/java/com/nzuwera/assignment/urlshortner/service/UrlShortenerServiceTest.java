@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -160,5 +161,15 @@ class UrlShortenerServiceTest {
         assertEquals(String.format("Url Id %s not found",unknownUrlId), exception.getMessage());
 
         verify(shortUrlRepository, times(1)).findByUrlId(unknownUrlId); // Ensure repository was called once
+    }
+
+    @Test
+    void UrlShortenerService_DeleteExpiredUrls(){
+            // Act
+            shortUrlService.deleteExpired();
+
+            // Assert
+            verify(shortUrlRepository, times(1)).deleteByExpireTimestampBefore(any(LocalDateTime.class));
+
     }
 }

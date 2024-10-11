@@ -8,4 +8,6 @@ public interface IUrlShortenerService {
     ResponseObject<ShortUrl> create(CreateShortUrlRequest request);
 
     ShortUrl getById(String id);
+
+    void deleteExpired();
 }
