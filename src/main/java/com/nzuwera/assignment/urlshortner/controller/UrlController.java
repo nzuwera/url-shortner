@@ -10,10 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,5 +31,11 @@ public class UrlController {
     public ResponseEntity<ResponseObject<ShortUrl>> createShortUrl(@Valid @RequestBody CreateShortUrlRequest request) {
         ResponseObject<ShortUrl> response = shortenerService.create(request);
         return ResponseEntity.status(response.getCode()).body(response);
+    }
+
+    @GetMapping(value = "{id}")
+    public RedirectView getShortUrl(@PathVariable String id) {
+        ShortUrl shortUrl = shortenerService.getById(id);
+        return new RedirectView(shortUrl.getUrl());
     }
 }

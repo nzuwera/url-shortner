@@ -15,7 +15,7 @@ public class DtoMapper {
         ShortUrl shortUrl = new ShortUrl();
         shortUrl.setUrl(request.getUrl());
         shortUrl.setUrlId(StringUtils.hasText(request.getShortUrlId()) ? request.getShortUrlId() : Utils.generateUrlId());
-        shortUrl.setExpireTimestamp(request.getTtl() == 0 ? LocalDateTime.MAX : LocalDateTime.now().plusHours(request.getTtl()));
+        shortUrl.setExpireTimestamp(request.getTtl() == 0 ? LocalDateTime.now().plusYears(100) : LocalDateTime.now().plusHours(request.getTtl()));
         return shortUrl;
     }
 }
