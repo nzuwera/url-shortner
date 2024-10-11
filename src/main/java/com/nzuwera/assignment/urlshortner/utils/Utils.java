@@ -8,6 +8,6 @@ public class Utils {
     }
 
     public static String generateUrlId() {
-        return UUID.randomUUID().toString().replace("-", "");
+        return UUID.randomUUID().toString().replace("-", "").substring(0,8);
     }
 }

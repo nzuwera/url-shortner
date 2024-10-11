@@ -2,6 +2,7 @@ package com.nzuwera.assignment.urlshortner.service;
 
 import com.nzuwera.assignment.urlshortner.entity.ShortUrl;
 import com.nzuwera.assignment.urlshortner.exception.AlreadyExistsException;
+import com.nzuwera.assignment.urlshortner.exception.NotFoundException;
 import com.nzuwera.assignment.urlshortner.model.DtoMapper;
 import com.nzuwera.assignment.urlshortner.model.CreateShortUrlRequest;
 import com.nzuwera.assignment.urlshortner.model.ResponseObject;
@@ -42,4 +43,8 @@ public class UrlShortenerService implements IUrlShortenerService {
         }
     }
 
+    @Override
+    public ShortUrl getById(String id) {
+        return repository.findByUrlId(id).orElseThrow(() -> new NotFoundException(String.format("Url Id %s not found", id)));
+    }
 }

@@ -2,6 +2,7 @@ package com.nzuwera.assignment.urlshortner.service;
 
 import com.nzuwera.assignment.urlshortner.entity.ShortUrl;
 import com.nzuwera.assignment.urlshortner.exception.AlreadyExistsException;
+import com.nzuwera.assignment.urlshortner.exception.NotFoundException;
 import com.nzuwera.assignment.urlshortner.model.CreateShortUrlRequest;
 import com.nzuwera.assignment.urlshortner.model.DtoMapper;
 import com.nzuwera.assignment.urlshortner.model.ResponseObject;
@@ -15,12 +16,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UrlShortenerServiceTest {
@@ -45,7 +45,7 @@ class UrlShortenerServiceTest {
         String originalUrl = "https://google.com";
         request.setUrl(originalUrl);
         shortUrl = DtoMapper.toEntity(request);
-        Mockito.when(shortUrlRepository.save(Mockito.any(ShortUrl.class))).thenReturn(shortUrl);
+        when(shortUrlRepository.save(Mockito.any(ShortUrl.class))).thenReturn(shortUrl);
 
         ResponseObject<ShortUrl> createdUrl = shortUrlService.create(request);
         assertThat(createdUrl).isNotNull();
@@ -53,7 +53,7 @@ class UrlShortenerServiceTest {
         assertThat(createdUrl.getCode()).isEqualTo(200);
         assertThat(createdUrl.getData()).isNotNull();
         assertThat(createdUrl.getData().getUrl()).isEqualTo(originalUrl);
-        assertThat(createdUrl.getData().getExpireTimestamp()).isEqualTo(LocalDateTime.MAX);
+        assertThat(createdUrl.getData().getExpireTimestamp()).isEqualTo(shortUrl.getExpireTimestamp());
     }
 
     @Test
@@ -64,7 +64,7 @@ class UrlShortenerServiceTest {
         request.setUrl(originalUrl);
         request.setShortUrlId(desiredUrlId);
         shortUrl = DtoMapper.toEntity(request);
-        Mockito.when(shortUrlRepository.save(Mockito.any(ShortUrl.class))).thenReturn(shortUrl);
+        when(shortUrlRepository.save(Mockito.any(ShortUrl.class))).thenReturn(shortUrl);
 
         ResponseObject<ShortUrl> createdUrl = shortUrlService.create(request);
 
@@ -73,7 +73,7 @@ class UrlShortenerServiceTest {
         assertThat(createdUrl.getCode()).isEqualTo(200);
         assertThat(createdUrl.getData()).isNotNull();
         assertThat(createdUrl.getData().getUrl()).isEqualTo(originalUrl);
-        assertThat(createdUrl.getData().getExpireTimestamp()).isEqualTo(LocalDateTime.MAX);
+        assertThat(createdUrl.getData().getExpireTimestamp()).isEqualTo(shortUrl.getExpireTimestamp());
         assertThat(createdUrl.getData().getUrlId()).isEqualTo(desiredUrlId);
         assertThat(createdUrl.getMessage()).isEqualTo(String.format("ShortUrl %s created successfully!", desiredUrlId));
     }
@@ -87,7 +87,7 @@ class UrlShortenerServiceTest {
         request.setShortUrlId(desiredUrlId);
         request.setTtl(ttl);
         shortUrl = DtoMapper.toEntity(request);
-        Mockito.when(shortUrlRepository.save(Mockito.any(ShortUrl.class))).thenReturn(shortUrl);
+        when(shortUrlRepository.save(Mockito.any(ShortUrl.class))).thenReturn(shortUrl);
 
         ResponseObject<ShortUrl> createdUrl = shortUrlService.create(request);
 
@@ -110,15 +110,55 @@ class UrlShortenerServiceTest {
         request.setShortUrlId(desiredUrlId);
         request.setTtl(ttl);
         shortUrl = DtoMapper.toEntity(request);
-        Mockito.when(shortUrlRepository.findByUrl(originalUrl)).thenReturn(Optional.of(shortUrl));
+        when(shortUrlRepository.findByUrl(originalUrl)).thenReturn(Optional.of(shortUrl));
 
-        Exception exception = assertThrows(AlreadyExistsException.class, () -> {
-            shortUrlService.create(request);
-        });
+        Exception exception = assertThrows(AlreadyExistsException.class, () -> shortUrlService.create(request));
 
         String expectedMessage = String.format("ShortUrl already exists for URL = %s", request.getUrl());
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void UrlShortenerService_GetById_ReturnShortUrl() {
+        // Arrange
+        String originalUrl = "https://google.com";
+        String desiredUrlId = "GGL12345";
+        int ttl = 10;
+        request.setUrl(originalUrl);
+        request.setShortUrlId(desiredUrlId);
+        request.setTtl(ttl);
+        shortUrl = DtoMapper.toEntity(request);
+
+        when(shortUrlRepository.findByUrlId(desiredUrlId)).thenReturn(Optional.of(shortUrl));
+
+        // Act
+        ShortUrl result = shortUrlService.getById(desiredUrlId);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(shortUrl, result);
+        verify(shortUrlRepository, times(1)).findByUrlId(desiredUrlId); // Ensure repository was called once
+    }
+
+    @Test
+    void UrlShortenerService_GetById_ReturnNotFoundException() {
+        String originalUrl = "https://google.com";
+        String desiredUrlId = "GGL12345";
+        String unknownUrlId = "GGL123456";
+        int ttl = 10;
+        request.setUrl(originalUrl);
+        request.setShortUrlId(desiredUrlId);
+        request.setTtl(ttl);
+        shortUrl = DtoMapper.toEntity(request);
+
+        when(shortUrlRepository.findByUrlId(unknownUrlId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> shortUrlService.getById(unknownUrlId));
+        assertEquals(String.format("Url Id %s not found",unknownUrlId), exception.getMessage());
+
+        verify(shortUrlRepository, times(1)).findByUrlId(unknownUrlId); // Ensure repository was called once
     }
 }

@@ -6,4 +6,6 @@ import com.nzuwera.assignment.urlshortner.model.ResponseObject;
 
 public interface IUrlShortenerService {
     ResponseObject<ShortUrl> create(CreateShortUrlRequest request);
+
+    ShortUrl getById(String id);
 }
