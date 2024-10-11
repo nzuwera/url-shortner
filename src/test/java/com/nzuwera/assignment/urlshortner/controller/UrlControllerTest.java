@@ -8,6 +8,7 @@ import com.nzuwera.assignment.urlshortner.model.DtoMapper;
 import com.nzuwera.assignment.urlshortner.model.ResponseObject;
 import com.nzuwera.assignment.urlshortner.service.UrlShortenerService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,8 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = UrlController.class)
@@ -48,6 +48,7 @@ class UrlControllerTest {
     }
 
     @Test
+    @DisplayName("Create ShorUrl from original URL only")
     void UrlController_CreateShortUrl_ReturnCreatedResponseObject_001() throws Exception {
         // Arrange
         shortUrl = DtoMapper.toEntity(request);
@@ -66,6 +67,7 @@ class UrlControllerTest {
     }
 
     @Test
+    @DisplayName("Create ShorUrl from original and ShorUrlId")
     void UrlController_CreateShortUrl_ReturnCreatedResponseObject_002() throws Exception {
         // Arrange
         request.setShortUrlId("GGL1234567");
@@ -86,6 +88,7 @@ class UrlControllerTest {
     }
 
     @Test
+    @DisplayName("Get ShortUrl Should redirect to original URL")
     void UrlController_GetShortUrl_ShouldRedirect_To_OriginalUrl() throws Exception {
         // Arrange
         String shorUrlId = "GGL1234567";
@@ -102,6 +105,7 @@ class UrlControllerTest {
     }
 
     @Test
+    @DisplayName("Get ShortUrl Should return NotFoundException when ShortUrlId is not found")
     void UrlController_GetShortUrl_ShouldReturnNotFoundException_WhenShortUrlId_Is_NotFound() throws Exception {
         // Arrange
         String id = "nonExistingId";
@@ -112,5 +116,32 @@ class UrlControllerTest {
         mockMvc.perform(get("/" + id))
                 .andExpect(status().isNotFound());
         verify(service, times(1)).getById(id);
+    }
+
+    @Test
+    @DisplayName("Delete ShortUrl Should return HttpStatus 204")
+    void deleteShortUrl_shouldReturn204_whenUrlIsDeleted() throws Exception {
+        // Arrange
+        String id = "abc123";
+
+        // Act & Assert
+        mockMvc.perform(delete("/" + id)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        verify(service, times(1)).deleteById(id);
+    }
+
+    @Test
+    @DisplayName("Delete ShortUrl Should NotFoundException when ShortUrlId is not found")
+    void deleteShortUrl_shouldReturn404_whenUrlNotFound() throws Exception {
+        // Arrange
+        String id = "nonExistentId";
+
+        doThrow(new NotFoundException("Url Id nonExistentId not found")).when(service).deleteById(id);
+        // Act & Assert
+        mockMvc.perform(delete("/" + id)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+        verify(service, times(1)).deleteById(id);
     }
 }

@@ -10,4 +10,6 @@ public interface IUrlShortenerService {
     ShortUrl getById(String id);
 
     void deleteExpired();
+
+    void deleteById(String id);
 }

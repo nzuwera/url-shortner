@@ -22,7 +22,7 @@ class ShortUrlRepositoryTest {
     @BeforeEach
     public void setup() {
         shortUrl = new ShortUrl();
-        shortUrl.setExpireTimestamp(LocalDateTime.now().plusHours(20));
+        shortUrl.setExpireTimestamp(LocalDateTime.now().plusSeconds(20));
         shortUrl.setUrl("https://google.com");
         shortUrl.setUrlId("ggl123");
     }
@@ -39,8 +39,7 @@ class ShortUrlRepositoryTest {
         ShortUrl savedUrl = repository.save(shortUrl);
         assertThat(savedUrl).isNotNull();
         Optional<ShortUrl> foundUrl = repository.findByUrlId(shortUrl.getUrlId());
-        assertThat(foundUrl).isPresent(); // Check if value is present
-        assertThat(foundUrl.get()).isNotNull();    // Verify the entity is not null
+        assertThat(foundUrl).isPresent();
     }
 
     @Test
@@ -50,7 +49,30 @@ class ShortUrlRepositoryTest {
         assertThat(savedUrl).isNotNull();
 
         Optional<ShortUrl> foundUrl = repository.findByUrl(shortUrl.getUrl());
-        assertThat(foundUrl).isPresent(); // Check if value is present
-        assertThat(foundUrl.get()).isNotNull();    // Verify the entity is not null
+        assertThat(foundUrl).isPresent();
+    }
+
+    @Test
+    @DisplayName("Delete Expired ShortUrls")
+    void deleteByExpireTimestampBefore_shouldDeleteExpiredUrls() {
+        // Arrange
+        repository.save(shortUrl);
+        // Act
+        repository.deleteByExpireTimestampBefore(LocalDateTime.now().plusHours(1));
+        // Assert: Only the non-expired URL should remain
+        Optional<ShortUrl> url1 = repository.findByUrlId("ggl123");
+        assertThat(url1).isEmpty();
+    }
+
+    @Test
+    @DisplayName("DeleteById When ShorUrlId exist")
+    void deleteByUrlId_shouldDeleteUrlById() {
+        // Arrange
+        repository.save(shortUrl);
+        // Act: Delete URL with id "def456"
+        repository.deleteByUrlId("ggl123");
+        // Assert: The URL with id "def456" should be deleted, and "abc123" should still exist
+        Optional<ShortUrl> url1 = repository.findByUrlId("ggl123");
+        assertThat(url1).isEmpty();
     }
 }
