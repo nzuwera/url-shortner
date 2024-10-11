@@ -56,7 +56,16 @@ public class UrlShortenerService implements IUrlShortenerService {
     @Transactional
     public void deleteExpired() {
         LocalDateTime now = LocalDateTime.now();
-        log.info("Now - {}",now);
+        log.info("Now - {}", now);
         repository.deleteByExpireTimestampBefore(now);
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(String id) {
+        Optional<ShortUrl> optional = repository.findByUrlId(id);
+        if (optional.isEmpty())
+            throw new NotFoundException(String.format("Url Id %s not found", id));
+        repository.deleteByUrlId(id);
     }
 }

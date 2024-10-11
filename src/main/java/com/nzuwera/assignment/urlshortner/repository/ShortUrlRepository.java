@@ -14,4 +14,7 @@ public interface ShortUrlRepository extends JpaRepository<ShortUrl, Long> {
     Optional<ShortUrl> findByUrl(String url);
     @Modifying
     void deleteByExpireTimestampBefore(LocalDateTime now);
+
+    @Modifying
+    void deleteByUrlId(String id);
 }

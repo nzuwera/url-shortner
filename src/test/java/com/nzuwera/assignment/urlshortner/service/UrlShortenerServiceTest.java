@@ -78,6 +78,7 @@ class UrlShortenerServiceTest {
         assertThat(createdUrl.getData().getUrlId()).isEqualTo(desiredUrlId);
         assertThat(createdUrl.getMessage()).isEqualTo(String.format("ShortUrl %s created successfully!", desiredUrlId));
     }
+
     @Test
     @DisplayName("Create shortUrl successful using originalUrl, UrlId and ttl!")
     void UrlShortenerService_CreateShortUrl_ReturnResponseObjectShortUrl_003() {
@@ -122,6 +123,7 @@ class UrlShortenerServiceTest {
     }
 
     @Test
+    @DisplayName("GetById should return ShortUrl")
     void UrlShortenerService_GetById_ReturnShortUrl() {
         // Arrange
         String originalUrl = "https://google.com";
@@ -131,12 +133,9 @@ class UrlShortenerServiceTest {
         request.setShortUrlId(desiredUrlId);
         request.setTtl(ttl);
         shortUrl = DtoMapper.toEntity(request);
-
         when(shortUrlRepository.findByUrlId(desiredUrlId)).thenReturn(Optional.of(shortUrl));
-
         // Act
         ShortUrl result = shortUrlService.getById(desiredUrlId);
-
         // Assert
         assertNotNull(result);
         assertEquals(shortUrl, result);
@@ -144,6 +143,7 @@ class UrlShortenerServiceTest {
     }
 
     @Test
+    @DisplayName("GetById should return NotFoundException")
     void UrlShortenerService_GetById_ReturnNotFoundException() {
         String originalUrl = "https://google.com";
         String desiredUrlId = "GGL12345";
@@ -153,23 +153,47 @@ class UrlShortenerServiceTest {
         request.setShortUrlId(desiredUrlId);
         request.setTtl(ttl);
         shortUrl = DtoMapper.toEntity(request);
-
         when(shortUrlRepository.findByUrlId(unknownUrlId)).thenReturn(Optional.empty());
-
         // Act & Assert
         NotFoundException exception = assertThrows(NotFoundException.class, () -> shortUrlService.getById(unknownUrlId));
-        assertEquals(String.format("Url Id %s not found",unknownUrlId), exception.getMessage());
-
+        assertEquals(String.format("Url Id %s not found", unknownUrlId), exception.getMessage());
         verify(shortUrlRepository, times(1)).findByUrlId(unknownUrlId); // Ensure repository was called once
     }
 
     @Test
-    void UrlShortenerService_DeleteExpiredUrls(){
-            // Act
-            shortUrlService.deleteExpired();
+    @DisplayName("Delete Expired ShortUrls")
+    void UrlShortenerService_DeleteExpiredUrls() {
+        // Act
+        shortUrlService.deleteExpired();
+        // Assert
+        verify(shortUrlRepository, times(1)).deleteByExpireTimestampBefore(any(LocalDateTime.class));
+    }
 
-            // Assert
-            verify(shortUrlRepository, times(1)).deleteByExpireTimestampBefore(any(LocalDateTime.class));
+    @Test
+    @DisplayName("DeleteById When ShorUrlId exist")
+    void UrlShortenerService_deleteById() {
+        // Arrange
+        String originalUrl = "https://google.com";
+        String desiredUrlId = "GGL12345";
+        shortUrl = DtoMapper.toEntity(CreateShortUrlRequest.builder().url(originalUrl).shortUrlId(desiredUrlId).build());
+        // Act
+        when(shortUrlRepository.findByUrlId(desiredUrlId)).thenReturn(Optional.of(shortUrl)); // Simulate URL found
 
+        shortUrlService.deleteById(desiredUrlId);
+        // Assert
+        verify(shortUrlRepository, times(1)).deleteByUrlId(desiredUrlId);
+    }
+    @Test
+    @DisplayName("DeleteById Should throw NotFoundException when ShortUrlId does not exist")
+    void UrlShortenerService_deleteById_shouldThrowNotFoundException() {
+        // Arrange
+        String id = "nonExistentId";
+        when(shortUrlRepository.findByUrlId(id)).thenReturn(Optional.empty());
+        // Act & Assert
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
+            shortUrlService.deleteById(id);
+        });
+        assertEquals(String.format("Url Id %s not found", id), exception.getMessage());
+        verify(shortUrlRepository, never()).deleteByUrlId(id);
     }
 }
