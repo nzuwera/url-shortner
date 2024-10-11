@@ -1,13 +1,17 @@
 package com.nzuwera.assignment.urlshortner.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.validator.constraints.URL;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "SHORT_URLS", indexes = @Index(name = "URL_ID_IDX", columnList = "URL_ID", unique = true))
 public class ShortUrl {
     @Id
@@ -19,5 +23,6 @@ public class ShortUrl {
     @Column(name = "URL_ID", nullable = false)
     private String urlId;
     @Column(name = "EXPIRE_TIMESTAMP")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime expireTimestamp;
 }

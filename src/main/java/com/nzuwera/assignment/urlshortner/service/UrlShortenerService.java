@@ -10,8 +10,11 @@ import com.nzuwera.assignment.urlshortner.repository.ShortUrlRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -46,5 +49,14 @@ public class UrlShortenerService implements IUrlShortenerService {
     @Override
     public ShortUrl getById(String id) {
         return repository.findByUrlId(id).orElseThrow(() -> new NotFoundException(String.format("Url Id %s not found", id)));
+    }
+
+    @Scheduled(cron = "*/15 * * * * ?")
+    @Override
+    @Transactional
+    public void deleteExpired() {
+        LocalDateTime now = LocalDateTime.now();
+        log.info("Now - {}",now);
+        repository.deleteByExpireTimestampBefore(now);
     }
 }
