@@ -1,5 +1,8 @@
 HELP.md
 target/
+.gradle/
+.jpb/
+build/
 
 ### IntelliJ IDEA ###
 .idea/
