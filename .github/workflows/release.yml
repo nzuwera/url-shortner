@@ -57,12 +57,8 @@ jobs:
           docker push nzuwera/url-shortner:latest
 
       - name: Push new version to main branch
-        env:
-          USER_NAME: "${{ env.GITHUB_ACTOR }}"
-          USER_EMAIL: "${{ env.GITHUB_ACTOR }}@users.noreply.github.com"
-          USER_COMMIT_MESSAGE: "Release version update"
         run: |
-          git config user.name "${{ env.USER_NAME }}"
-          git config user.email "${{ env.USER_EMAIL }}"
-          git commit -a -m "${{ env.USER_COMMIT_MESSAGE }}"
+          git config user.name "${{ secrets.GITHUB_USERNAME }}"
+          git config user.email "${{ secrets.GITHUB_EMAIL }}"
+          git commit -a -m "Release version update"
           git push
