@@ -23,8 +23,8 @@ jobs:
       # Update the version in build.gradle
       - name: Bump version to the release tag
         env:
-          USER_NAME: "${GITHUB_ACTOR}"
-          USER_EMAIL: "${GITHUB_ACTOR}@users.noreply.github.com"
+          USER_NAME: "${{ env.GITHUB_ACTOR }}"
+          USER_EMAIL: "${{ env.GITHUB_ACTOR }}@users.noreply.github.com"
           USER_COMMIT_MESSAGE: "Release version update"
 
         run: |
@@ -33,10 +33,6 @@ jobs:
           sed -i "s/version = '.*'/version = '$TAG_NAME'/" build.gradle
           chmod +x gradlew
           ./gradlew clean build -x test
-          git config --global user.name "${{ env.USER_NAME }}"
-          git config --global user.email "${{ env.USER_EMAIL }}"
-          git commit -a -m "${{ env.USER_COMMIT_MESSAGE }}"
-          git push
 
       # Login to Docker Hub
       - name: Login to Docker Hub
@@ -59,3 +55,14 @@ jobs:
           echo "Pushing Docker image to Docker Hub with tag $TAG_NAME"
           docker push nzuwera/url-shortner:$TAG_NAME
           docker push nzuwera/url-shortner:latest
+
+      - name: Push new version to main branch
+        env:
+          USER_NAME: "${{ env.GITHUB_ACTOR }}"
+          USER_EMAIL: "${{ env.GITHUB_ACTOR }}@users.noreply.github.com"
+          USER_COMMIT_MESSAGE: "Release version update"
+        run: |
+          git config --global user.name "${{ env.USER_NAME }}"
+          git config --global user.email "${{ env.USER_EMAIL }}"
+          git commit -a -m "${{ env.USER_COMMIT_MESSAGE }}"
+          git push
