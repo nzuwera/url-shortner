@@ -58,7 +58,7 @@ jobs:
 
       - name: Push new version to main branch
         run: |
-          git config user.name "${{ secrets.GITHUB_USERNAME }}"
-          git config user.email "${{ secrets.GITHUB_EMAIL }}"
+          git config user.name "${{ secrets.GH_NAME }}"
+          git config user.email "${{ secrets.GH_EMAIL }}"
           git commit -a -m "Release version update"
           git push
