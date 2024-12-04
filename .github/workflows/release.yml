@@ -12,6 +12,9 @@ jobs:
     steps:
       # Checkout the code
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
 
       # Set up JDK 17
       - name: Set up JDK 17
@@ -56,9 +59,12 @@ jobs:
           docker push nzuwera/url-shortner:$TAG_NAME
           docker push nzuwera/url-shortner:latest
 
-      - name: Push new version to main branch
+      - name: Commit files
         run: |
-          git config user.name "${{ secrets.GH_NAME }}"
-          git config user.email "${{ secrets.GH_EMAIL }}"
-          git commit -a -m "Release version update"
-          git push
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -a -m "Release Version upgrade"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          branch: ${{ github.head_ref }}
