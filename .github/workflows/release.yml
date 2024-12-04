@@ -31,6 +31,7 @@ jobs:
           TAG_NAME=${{ github.event.release.tag_name }}
           echo "Bumping application version to $TAG_NAME"
           sed -i "s/version = '.*'/version = '$TAG_NAME'/" build.gradle
+          chmod +x gradlew
           ./gradlew clean build -x test
           git config --global user.name "${{ env.USER_NAME }}"
           git config --global user.email "${{ env.USER_EMAIL }}"
