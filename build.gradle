@@ -1,0 +1,79 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id "org.sonarqube" version "6.0.1.5171"
+    id 'org.springframework.boot' version '3.3.4'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+
+
+group = 'com.nzuwera.assignment'
+version = 'v0.1.1'
+description = 'url-shortener'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.flywaydb:flyway-mysql'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+    implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+    runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+    implementation 'com.mysql:mysql-connector-j'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.h2database:h2'
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+    testCompileOnly 'org.projectlombok:lombok:1.18.36'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
+    classDirectories.setFrom(
+            fileTree(dir: "$layout.buildDirectory/classes/java/main") {
+                exclude(
+                        "com/nzuwera/assignment/urlshortner/entity/**",
+                        "com/nzuwera/assignment/urlshortner/exception/**",
+                        "com/nzuwera/assignment/urlshortner/utils/**"
+                )
+            }
+    )
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "nzuwera_url-shortner"
+        property "sonar.organization", "nzuwera"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
+}
