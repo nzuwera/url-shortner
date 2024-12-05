@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: {{ .Values.backend.image }}
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: backend-env
+                  key: DATABASE_URL
+            - name: MYSQL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: backend-env
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: backend-env
+                  key: MYSQL_PASSWORD
+          volumeMounts:
+            - mountPath: /logs
+              name: logs-volume
+      volumes:
+        - name: logs-volume
+          hostPath:
+            path: /logs

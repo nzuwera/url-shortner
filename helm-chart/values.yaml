@@ -1,0 +1,10 @@
+backend:
+  image: "nzuwera/url-shortner:latest"
+
+mysql:
+  image: "mysql:8.0.33"
+  env:
+    MYSQL_DATABASE: url_shortner
+    MYSQL_USER: mysql_user
+    MYSQL_PASSWORD: toor
+    MYSQL_ROOT_PASSWORD: toor

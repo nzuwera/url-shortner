@@ -20,14 +20,21 @@ Here are the requirement to run this project locally on your machine.
 #### Dependencies
 - Docker.
 - JDK 17
-- Maven
+- Gradle
+- Kubernetes
 
 #### How to configure the application
 - Copy the `.env.local` to `.env` and update the file accordingly.
-- Build the application by running `mvn clean package`
+- Build the application by running `./gradlew build`
 
-#### How to run the application
+#### How to run the application on Docker
 - Run `docker compose up -d` this should start the application
 
+#### How to run the application on Kubernetes
+- Run `helm install url-shortener ./helm-chart`
+- If deployed on minikube, run `minikube tunnel` to expose the application
+
 #### How to use the application
-- Visit `http://localhost/swagger-ui.html` to access the api documentation
+- Visit `http://localhost:8080/swagger-ui.html` to access the api documentation
+
+
